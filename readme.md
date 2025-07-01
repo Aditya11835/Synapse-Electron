@@ -64,7 +64,6 @@ users: {
 | Component           | Repo                                                                       |
 | ------------------- | -------------------------------------------------------------------------- |
 | 📱 Flutter App      | [Synapse-Mobile](https://github.com/Utsavvv1/browser-ext)                  |
-| 💻 Python Monitor   | [Synapse-Desktop](https://github.com/Utsavvv1/harmonicdisruption)          |
 | 🌐 Chrome Extension | [Synapse-Extension](https://github.com/Zyphon12342/HarmonicDistruptionApp) |
 
 ## 👥 Contributors
