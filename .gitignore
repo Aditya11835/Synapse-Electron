@@ -142,3 +142,4 @@ synapse_dashboard.html
 t.html
 
 *.env
+data/

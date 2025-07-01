@@ -1,6 +1,8 @@
 const { contextBridge } = require("electron");
 const path = require("path");
+const fs = require("fs");
 const dotenv = require("dotenv");
+const { customAlphabet } = require("nanoid");
 
 // Load environment variables
 dotenv.config({ path: path.resolve(__dirname, ".env") });
@@ -14,10 +16,36 @@ try {
   throw e;
 }
 
+// Generate 8-character uppercase alphanumeric ID
+const generateUserId = customAlphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 8);
+
+// Setup data directory and user_id.txt
+const dataDir = path.resolve(__dirname, "data");
+const userIdFile = path.join(dataDir, "user_id.txt");
+
+let USER_ID;
+
+try {
+  if (!fs.existsSync(dataDir)) {
+    fs.mkdirSync(dataDir);
+  }
+
+  if (!fs.existsSync(userIdFile)) {
+    USER_ID = generateUserId();
+    fs.writeFileSync(userIdFile, USER_ID, "utf-8");
+    console.log("Generated new USER_ID:", USER_ID);
+  } else {
+    USER_ID = fs.readFileSync(userIdFile, "utf-8").trim();
+    console.log("Loaded existing USER_ID:", USER_ID);
+  }
+} catch (err) {
+  console.error("Error managing USER_ID:", err.message);
+  throw err;
+}
+
 // Firebase config
 const FIREBASE_URL = process.env.FIREBASE_URL;
 const API_KEY = process.env.API_KEY;
-const USER_ID = process.env.USER_ID;
 const focusModeURL = `${FIREBASE_URL}/users/${USER_ID}/settings/focusMode.json?auth=${API_KEY}`;
 
 async function setFocusMode(value) {
