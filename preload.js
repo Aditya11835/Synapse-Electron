@@ -2,12 +2,12 @@ const { contextBridge } = require("electron");
 const dotenv = require("dotenv");
 const path = require("path");
 
-// ✅ Use native fetch if available (Node 18+), fallback to node-fetch
+// Use native fetch if available (Node 18+), fallback to node-fetch
 let fetchFn;
 try {
   fetchFn = global.fetch || require("node-fetch");
 } catch (e) {
-  console.error("❌ fetch not found – please install node-fetch: npm install node-fetch");
+  console.error("fetch not found – please install node-fetch: npm install node-fetch");
   throw e;
 }
 
@@ -32,10 +32,10 @@ contextBridge.exposeInMainWorld("firebaseAPI", {
       });
 
       const result = await response.json();
-      console.log(`✅ focusMode set to ${isEnabled}`);
+      console.log(`focusMode set to ${isEnabled}`);
       return result;
     } catch (error) {
-      console.error("❌ Error setting focusMode:", error.message);
+      console.error("Error setting focusMode:", error.message);
       throw error;
     }
   },
@@ -47,10 +47,10 @@ contextBridge.exposeInMainWorld("firebaseAPI", {
       const response = await fetchFn(url);
       const data = await response.json();
 
-      console.log("🔍 focusMode from Firebase:", data);
+      console.log("focusMode from Firebase:", data);
       return data;
     } catch (error) {
-      console.error("❌ Error reading focusMode:", error.message);
+      console.error("Error reading focusMode:", error.message);
       throw error;
     }
   }
