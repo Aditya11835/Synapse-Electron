@@ -5,11 +5,13 @@ A lightweight **Electron-based focus state manager** that syncs your focus mode 
 ---
 
 ## ✅ Features
-
-- Toggle **Focus Mode ON/OFF** via desktop UI.
-- Syncs `focusMode` status to Firebase Realtime Database.
-- Status indicator for current focus state.
-- Bridges to **Flutter mobile app** and **Chrome extension**.
+- Toggle Focus Mode ON/OFF via desktop UI.
+- Syncs focusMode status to Firebase Realtime Database.
+- UI auto-resets focusMode to OFF on app load and exit for safety.
+- Visual status indicators for current focus state (ON/OFF).
+- Graceful error handling with console logging.
+- Shows formatted user ID in UI (XXXX-XXXX).
+- Works seamlessly with Flutter mobile app and Chrome extension for unified focus control.
 
 ---
 
@@ -40,7 +42,6 @@ Create a .env file in the root directory:
 ```bash
 FIREBASE_URL=https://your-database-url.firebaseio.com
 API_KEY=your_firebase_web_api_key
-USER_ID=XX0000XX
 ```
 
 ## ▶️ Run the App
