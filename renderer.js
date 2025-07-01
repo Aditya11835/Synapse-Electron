@@ -1,6 +1,22 @@
 document.addEventListener("DOMContentLoaded", () => {
   console.log("firebaseAPI available?", window.firebaseAPI);
 
+  //First reset to false
+  window.firebaseAPI?.setFocusMode(false)
+    .then(() => {
+      console.log("focusMode reset to false on load");
+
+      //After resetting, reflect UI state
+      focusStateEl.textContent = "OFF";
+      focusStateEl.classList.add("off");
+      focusStateEl.classList.remove("on");
+
+      statusIndicatorEl.classList.add("off");
+      statusIndicatorEl.classList.remove("on");
+    })
+    .catch(err => console.error("Error resetting focusMode on load:", err));
+
+
   const userIdEl = document.getElementById("userId");
   if (userIdEl && window.firebaseAPI?.getUsername) {
     const username = window.firebaseAPI.getUsername();
@@ -43,23 +59,6 @@ document.addEventListener("DOMContentLoaded", () => {
         .then(() => console.log("focusMode set to false"))
         .catch(err => console.error("Error writing focusMode:", err));
     });
-  }
-
-  // Load initial focusMode state
-  if (window.firebaseAPI?.getFocusMode) {
-    window.firebaseAPI.getFocusMode()
-      .then((state) => {
-        if (state === true) {
-          focusStateEl.textContent = "ON";
-          focusStateEl.classList.add("on");
-          statusIndicatorEl.classList.add("on");
-        } else {
-          focusStateEl.textContent = "OFF";
-          focusStateEl.classList.add("off");
-          statusIndicatorEl.classList.add("off");
-        }
-      })
-      .catch(err => console.error("Could not load focusMode from Firebase:", err));
   }
 
   // Handle app quit — reset focusMode to false before exit
