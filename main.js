@@ -1,9 +1,7 @@
 const { app, BrowserWindow, powerMonitor } = require('electron');
 const path = require('node:path');
 
-
 let mainWindow;
-
 const createWindow = () => {
     mainWindow = new BrowserWindow({
         width: 960,
@@ -16,7 +14,6 @@ const createWindow = () => {
             sandbox: false
         }
     });
-
     mainWindow.loadFile("index.html");
 };
 
