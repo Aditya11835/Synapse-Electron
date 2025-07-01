@@ -1,9 +1,11 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, powerMonitor } = require('electron');
 const path = require('node:path');
-require('dotenv').config(); // loads .env
+
+
+let mainWindow;
 
 const createWindow = () => {
-    const win = new BrowserWindow({
+    mainWindow = new BrowserWindow({
         width: 960,
         height: 800,
         icon: path.join(__dirname, "assets", "logosynapse.png"),
@@ -14,7 +16,8 @@ const createWindow = () => {
             sandbox: false
         }
     });
-    win.loadFile("index.html");
+
+    mainWindow.loadFile("index.html");
 };
 
 app.whenReady().then(() => {

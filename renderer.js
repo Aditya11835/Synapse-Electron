@@ -13,10 +13,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const focusOnBtn = document.getElementById("focusOnBtn");
   const focusOffBtn = document.getElementById("focusOffBtn");
 
-  // 🔘 Focus ON button
+  // Focus ON button
   if (focusOnBtn) {
     focusOnBtn.addEventListener("click", () => {
-      // Update UI
       focusStateEl.textContent = "ON";
       focusStateEl.classList.remove("off");
       focusStateEl.classList.add("on");
@@ -24,17 +23,15 @@ document.addEventListener("DOMContentLoaded", () => {
       statusIndicatorEl.classList.remove("off");
       statusIndicatorEl.classList.add("on");
 
-      // ✅ Push to Firebase
       window.firebaseAPI.setFocusMode(true)
-        .then(() => console.log("✅ focusMode set to true"))
-        .catch(err => console.error("❌ Error writing focusMode:", err));
+        .then(() => console.log("focusMode set to true"))
+        .catch(err => console.error("Error writing focusMode:", err));
     });
   }
 
-  // 🔘 Focus OFF button
+  // Focus OFF button
   if (focusOffBtn) {
     focusOffBtn.addEventListener("click", () => {
-      // Update UI
       focusStateEl.textContent = "OFF";
       focusStateEl.classList.remove("on");
       focusStateEl.classList.add("off");
@@ -42,14 +39,13 @@ document.addEventListener("DOMContentLoaded", () => {
       statusIndicatorEl.classList.remove("on");
       statusIndicatorEl.classList.add("off");
 
-      // ✅ Push to Firebase
       window.firebaseAPI.setFocusMode(false)
-        .then(() => console.log("✅ focusMode set to false"))
-        .catch(err => console.error("❌ Error writing focusMode:", err));
+        .then(() => console.log("focusMode set to false"))
+        .catch(err => console.error("Error writing focusMode:", err));
     });
   }
 
-  // 🔄 Optional: Load current state from Firebase on load
+  // Load initial focusMode state
   if (window.firebaseAPI?.getFocusMode) {
     window.firebaseAPI.getFocusMode()
       .then((state) => {
@@ -63,6 +59,24 @@ document.addEventListener("DOMContentLoaded", () => {
           statusIndicatorEl.classList.add("off");
         }
       })
-      .catch(err => console.error("❌ Could not load focusMode from Firebase:", err));
+      .catch(err => console.error("Could not load focusMode from Firebase:", err));
   }
+
+  // Handle app quit — reset focusMode to false before exit
+  window.onbeforeunload = async (e) => {
+    e.returnValue = false; // Prevents immediate close
+
+    try {
+      await window.firebaseAPI.resetFocusMode();
+      console.log("focusMode reset successfully. Proceeding with quit.");
+
+      // Unbind and allow quit
+      window.onbeforeunload = null;
+      window.close();
+    } catch (err) {
+      console.error("Error resetting focusMode before quit:", err);
+      window.onbeforeunload = null;
+      window.close(); // Proceed anyway on failure
+    }
+  };
 });
