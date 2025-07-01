@@ -4,15 +4,20 @@ const fs = require("fs");
 const dotenv = require("dotenv");
 const { customAlphabet } = require("nanoid");
 
-// Generate 8-character uppercase alphanumeric ID
-const generateUserId = customAlphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 8);
-
 // Load environment variables
 dotenv.config({ path: path.resolve(__dirname, ".env") });
-// Firebase config
-const FIREBASE_URL = process.env.FIREBASE_URL;
-const API_KEY = process.env.API_KEY;
-const focusModeURL = `${FIREBASE_URL}/users/${USER_ID}/settings/focusMode.json?auth=${API_KEY}`;
+
+// Use native fetch if available (Node 18+), fallback to node-fetch
+let fetchFn;
+try {
+  fetchFn = global.fetch || require("node-fetch");
+} catch (e) {
+  console.error("fetch not found please install node-fetch: npm install node-fetch");
+  throw e;
+}
+
+// Generate 8-character uppercase alphanumeric ID
+const generateUserId = customAlphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 8);
 
 // Setup data directory and user_id.txt
 const dataDir = path.resolve(__dirname, "data");
@@ -36,14 +41,11 @@ catch (err) {
   throw err;
 }
 
-// Use native fetch if available (Node 18+), fallback to node-fetch
-let fetchFn;
-try {
-  fetchFn = global.fetch || require("node-fetch");
-} catch (e) {
-  console.error("fetch not found please install node-fetch: npm install node-fetch");
-  throw e;
-}
+// Firebase config
+const FIREBASE_URL = process.env.FIREBASE_URL;
+const API_KEY = process.env.API_KEY;
+const focusModeURL = `${FIREBASE_URL}/users/${USER_ID}/settings/focusMode.json?auth=${API_KEY}`;
+
 //set and get DB functions
 async function setFocusMode(value) {
   const response = await fetchFn(focusModeURL, {
