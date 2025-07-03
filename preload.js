@@ -27,7 +27,7 @@ try {
 }
 
 // Generate 8-character uppercase alphanumeric ID
-const generateUserId = customAlphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 8);
+const generateUserId = customAlphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789", 8);
 
 // Setup data directory and user_id.txt
 const dataDir = path.resolve(__dirname, "data");
