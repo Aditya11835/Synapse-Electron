@@ -89,3 +89,9 @@ else{
     statusIndicatorEl.classList.remove("on");
     statusIndicatorEl.classList.add("off");
 }
+
+window.testAPI.startPing();
+
+window.testAPI.onPong((data) => {
+  console.log(data); // Logs "pong" every second
+});

@@ -1,4 +1,4 @@
-const { contextBridge } = require("electron");
+const { contextBridge, ipcRenderer } = require("electron");
 const path = require("path");
 const fs = require("fs");
 const dotenv = require("dotenv");
@@ -74,4 +74,8 @@ contextBridge.exposeInMainWorld("firebaseAPI", {
     setFocusMode,
     getFocusMode,
     resetFocusMode: () => setFocusMode(false)
+});
+contextBridge.exposeInMainWorld('testAPI', {
+    startPing: () => ipcRenderer.send('start-ping'),
+    onPong: (callback) => ipcRenderer.on('pong', (_, data) => callback(data))
 });

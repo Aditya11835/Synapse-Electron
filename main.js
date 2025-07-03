@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('node:path');
 
 let mainWindow;
@@ -20,6 +20,12 @@ const createWindow = () => {
 
 app.whenReady().then(() => {
     createWindow();
+    
+    ipcMain.on('start-ping', (event) => {
+        setInterval(() => {
+            event.sender.send('pong', 'pong'); // send to renderer
+        }, 1000);
+    });
 
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) createWindow();
