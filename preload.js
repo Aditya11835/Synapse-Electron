@@ -10,10 +10,10 @@ dotenv.config({ path: path.resolve(__dirname, ".env") });
 // Use native fetch if available (Node 18+), fallback to node-fetch
 let fetchFn;
 try {
-  fetchFn = global.fetch || require("node-fetch");
+    fetchFn = global.fetch || require("node-fetch");
 } catch (e) {
-  console.error("fetch not found please install node-fetch: npm install node-fetch");
-  throw e;
+    console.error("fetch not found please install node-fetch: npm install node-fetch");
+    throw e;
 }
 
 // Generate 8-character uppercase alphanumeric ID
@@ -24,21 +24,21 @@ const dataDir = path.resolve(__dirname, "data");
 const userIdFile = path.join(dataDir, "user_id.txt");
 let USER_ID;
 try {
-  if (!fs.existsSync(dataDir)) {
-    fs.mkdirSync(dataDir);
-  }
-  if (!fs.existsSync(userIdFile)) {
-    USER_ID = generateUserId();
-    fs.writeFileSync(userIdFile, USER_ID, "utf-8");
-    console.log("Generated new USER_ID:", USER_ID);
-  } else {
-    USER_ID = fs.readFileSync(userIdFile, "utf-8").trim();
-    console.log("Loaded existing USER_ID:", USER_ID);
-  }
+    if (!fs.existsSync(dataDir)) {
+        fs.mkdirSync(dataDir);
+    }
+    if (!fs.existsSync(userIdFile)) {
+        USER_ID = generateUserId();
+        fs.writeFileSync(userIdFile, USER_ID, "utf-8");
+        console.log("Generated new USER_ID:", USER_ID);
+    } else {
+        USER_ID = fs.readFileSync(userIdFile, "utf-8").trim();
+        console.log("Loaded existing USER_ID:", USER_ID);
+    }
 }
 catch (err) {
-  console.error("Error managing USER_ID:", err.message);
-  throw err;
+    console.error("Error managing USER_ID:", err.message);
+    throw err;
 }
 
 // Firebase config
@@ -48,30 +48,30 @@ const focusModeURL = `${FIREBASE_URL}/users/${USER_ID}/settings/focusMode.json?a
 
 //set and get DB functions
 async function setFocusMode(value) {
-  const response = await fetchFn(focusModeURL, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(value),
-  });
+    const response = await fetchFn(focusModeURL, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(value),
+    });
 
-  if (!response.ok) throw new Error(`HTTP ${response.status}`);
-  const result = await response.json();
-  console.log(`focusMode set to ${value}`);
-  return result;
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const result = await response.json();
+    console.log(`focusMode set to ${value}`);
+    return result;
 }
 
 async function getFocusMode() {
-  const response = await fetchFn(focusModeURL);
-  if (!response.ok) throw new Error(`HTTP ${response.status}`);
-  const data = await response.json();
-  console.log("focusMode from Firebase:", data);
-  return data;
+    const response = await fetchFn(focusModeURL);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const data = await response.json();
+    console.log("focusMode from Firebase:", data);
+    return data;
 }
 
 //Make firebaseAPI for renderer.js
 contextBridge.exposeInMainWorld("firebaseAPI", {
-  getUsername: () => USER_ID,
-  setFocusMode,
-  getFocusMode,
-  resetFocusMode: () => setFocusMode(false)
+    getUsername: () => USER_ID,
+    setFocusMode,
+    getFocusMode,
+    resetFocusMode: () => setFocusMode(false)
 });

@@ -1,9 +1,10 @@
-const { app, BrowserWindow, powerMonitor } = require('electron');
+const { app, BrowserWindow } = require('electron');
 const path = require('node:path');
 
 let mainWindow;
 const createWindow = () => {
     mainWindow = new BrowserWindow({
+        fullscreen: true,
         width: 960,
         height: 800,
         icon: path.join(__dirname, "assets", "logosynapse.png"),
