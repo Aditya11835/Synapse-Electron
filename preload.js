@@ -1,8 +1,18 @@
-const { contextBridge, ipcRenderer } = require("electron");
+/**
+ * preload.js
+ * - Manages user ID
+ * - Handles process detection (white/black list)
+ * - Syncs focusMode state with Firebase
+ * - Exposes Firebase control to renderer
+ */
+
+const { contextBridge } = require("electron");
 const path = require("path");
 const fs = require("fs");
 const dotenv = require("dotenv");
 const { customAlphabet } = require("nanoid");
+const si = require('systeminformation');
+const fkill = require('fkill').default;
 
 // Load environment variables
 dotenv.config({ path: path.resolve(__dirname, ".env") });
@@ -68,14 +78,71 @@ async function getFocusMode() {
     return data;
 }
 
+let WHITELIST = ["notion.exe", /*"code.exe",*/ "word.exe", "excel.exe", "powerpoint.exe",
+    "acrobat.exe", "chrome.exe", "firefox.exe", "teams.exe", "zoom.exe", "onenote.exe", "outlook.exe", "notepad.exe"];
+let BLACKLIST = ["spotify.exe", "whatsapp.exe"];
+
+const killBlackListProcess = async (killList) => {
+    try{
+        if(killList.length === 0){
+            return;
+        }
+        for(const proc of killList){
+            try{
+                await fkill(proc.pid, { force: true, tree: true }); //Only for Windows
+            }
+            catch(err){
+                console.error(`Error handling ${proc.name}:`, err);
+            }
+        }
+    }
+    catch{
+        console.error("Failed.");
+    }
+}
+
+let focusModeActive = false;
+const detectWhiteListProcess = async () => {
+    try {
+        const data = await si.processes();
+        const procList = data.list;
+        const targetList = procList.filter(proc => WHITELIST.includes(proc.name.toLowerCase()));
+
+        if (targetList.length !== 0) {
+            if (!focusModeActive) {
+                await setFocusMode(true);
+                focusModeActive = true;
+            }
+
+            BLACKLIST = BLACKLIST.filter(b => !WHITELIST.includes(b));
+            const killList = procList.filter(proc => BLACKLIST.includes(proc.name.toLowerCase()));
+            killBlackListProcess(killList);
+        } else if (focusModeActive) {
+            await setFocusMode(false);
+            focusModeActive = false;
+        }
+    } catch (err) {
+        console.error("Failed to fetch processes:", err);
+    }
+};
+
+let isRunning = false;
+const INTERVAL = 1500;
+setInterval(async () => {
+    if (isRunning) return;
+    isRunning = true;
+    try {
+        await detectWhiteListProcess();
+    } catch (e) {
+        console.error("Error in detectWhiteListProcess:", e);
+    }
+    isRunning = false;
+}, INTERVAL);
+
 //Make firebaseAPI for renderer.js
 contextBridge.exposeInMainWorld("firebaseAPI", {
     getUsername: () => USER_ID,
     setFocusMode,
     getFocusMode,
     resetFocusMode: () => setFocusMode(false)
-});
-contextBridge.exposeInMainWorld('testAPI', {
-    startPing: () => ipcRenderer.send('start-ping'),
-    onPong: (callback) => ipcRenderer.on('pong', (_, data) => callback(data))
 });
