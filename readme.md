@@ -59,8 +59,8 @@ npm run start
 ## 🌐 Works With
 | Component           | Repo                                                                       |
 | ------------------- | -------------------------------------------------------------------------- |
-| 📱 Flutter App      | [Synapse-Mobile](https://github.com/Utsavvv1/browser-ext)                  |
-| 🌐 Chrome Extension | [Synapse-Extension](https://github.com/Zyphon12342/HarmonicDistruptionApp) |
+| 📱 Flutter App      | [Synapse-Mobile](https://github.com/Zyphon12342/HarmonicDistruptionApp)                  |
+| 🌐 Chrome Extension | [Synapse-Extension](https://github.com/Utsavvv1/browser-ext) |
 
 ## 👥 Contributors
 | Name                  | GitHub                                                         |
