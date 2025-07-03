@@ -18,7 +18,6 @@
     "fkill": "^9.0.0",
     "nanoid": "^5.1.5",
     "node-fetch": "^3.3.2",
-    "pidtree": "^0.6.0",
     "systeminformation": "^5.27.7"
   }
 }
