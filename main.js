@@ -110,7 +110,7 @@ const createPopupWindow = () => {
 
 app.whenReady().then(() => {
     createWindow();
-    // createPopupWindow();
+    createPopupWindow();
 
     ipcMain.on("trigger-popup", () => {
     if (!popupWindow) createPopupWindow();

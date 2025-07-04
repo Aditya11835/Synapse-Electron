@@ -89,3 +89,8 @@ button#exit {
 button#exit:hover {
   background-color: #6a4fe0;
 }
+
+input[type="text"] {
+  box-shadow: 0 0 4px rgba(102, 88, 211, 0.2);
+}
+
