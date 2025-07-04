@@ -1,22 +1,39 @@
 # 🧠 Synapse – Electron Focus Broadcaster
-A lightweight **Electron-based focus state manager** that syncs your focus mode across devices using Firebase. Designed to work with the full **Synapse ecosystem** (Mobile App + Chrome Extension), this app ensures real-time sync of your working state to block distractions on phones and browsers.
+A lightweight Electron-based focus state manager that syncs your focus mode across devices using Firebase.
+Designed to work with the full Synapse ecosystem (Mobile App + Chrome Extension), this app enforces distraction-free workflows across desktop, browser, and mobile, all in real-time.
 
 ---
 
 ## ✅ Features
-- Syncs focusMode status to Firebase Realtime Database.
-- Auto-resets focusMode to OFF on app load and exit for safety.
-- Visual status indicators for current focus state (ON/OFF).
-- Graceful error handling with console logging.
-- Shows formatted user ID in UI (XXXX-XXXX).
-- Works seamlessly with Flutter mobile app and Chrome extension for unified focus control.
-- Secure preload architecture with contextBridge, blocking direct Node.js access in the renderer.
-- Background scanning of running processes to detect whitelisted apps (e.g., Chrome, Notion).
-- Automatically kills blacklisted apps (e.g., Spotify) when focus mode is triggered.
-- Unique user ID auto-generated and saved locally.
-- Periodically polls Firebase to reflect real-time changes in UI.
-- Prevents redundant Firebase writes using intelligent internal state flags.
-- Designed to run silently and continuously in fullscreen for immersive workflows.
+- Two-way sync with Firebase (Realtime DB): Seamlessly updates and reads focusMode.
+- FocusMode Auto-reset: Automatically resets to OFF on app start and safe exit.
+- Live Focus Indicator: Visual ON/OFF indicator updates every second.
+- Secure Preload Architecture:
+    - Uses contextBridge and ipcRenderer.invoke channels only.
+    - Completely isolates Node.js logic from renderer.
+- Background Process Monitoring:
+    - Detects whitelisted productivity apps.
+    - Instantly kills blacklisted distraction apps when focus is triggered.
+- Popup Interruption Alert:
+    - Custom modal (popup.html) triggered when user tries to open a blacklisted app.
+    - Asks user for intent before continuing.
+- Auto-generated User ID:
+    - 8-character secure ID saved in data/user_id.txt.
+    - Displayed as XXXX-XXXX in UI.
+- Optimized IPC Channels:
+    - getFocusMode, setFocusMode, resetFocusMode, and getUsername.
+- State-aware Polling Loop:
+    - Every 1.5s, checks system processes to determine active mode.
+
+    - Prevents redundant writes to Firebase.
+
+- Supports Popup + Main UI:
+    - Independent windows for main dashboard and interruption modal.
+- Failsafe Error Logging:
+    - Gracefully handles all fetch, file system, and process-killing errors.
+- Fullscreen, distraction-free experience:
+    - Intended for immersive workflows.
+    - Can run silently in background on startup.
 
 ---
 
@@ -24,7 +41,9 @@ A lightweight **Electron-based focus state manager** that syncs your focus mode 
 
 - *Currently only compatible with Windows*
 - *Node.js v16+*
-- *Firebase Project with Realtime Database*
+- *Firebase Project with:*
+    - Realtime Database enabled
+    - Web API Key generated
 
 ---
 
@@ -70,6 +89,12 @@ npm run start
 | Anomitra Bhattacharya | [@anomitroid](https://github.com/anomitroid)                   |
 | Aditya Negi           | [@Aditya11835](https://github.com/Aditya11835)                 |
 | Shivansh Kandpal      | [@Zyphon12342](https://github.com/Zyphon12342)                 |
+
+## 🛡 Security Highlights (New)
+- contextIsolation: true and nodeIntegration: false enforced.
+- Only whitelisted APIs are exposed via preload.js.
+- Firebase credentials remain local via .env file (never hardcoded).
+- App logic centralized in main.js, keeping preload.js minimal.
 
 ## 📜 License
 This project is licensed under the ICS License.
