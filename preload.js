@@ -78,9 +78,44 @@ async function getFocusMode() {
     return data;
 }
 
-let WHITELIST = ["notion.exe", /*"code.exe",*/ "word.exe", "excel.exe", "powerpoint.exe",
-    "acrobat.exe", "chrome.exe", "firefox.exe", "teams.exe", "zoom.exe", "onenote.exe", "outlook.exe", "notepad.exe"];
-let BLACKLIST = ["spotify.exe", "whatsapp.exe"];
+let WHITELIST = [
+    "notion.exe",           // Note-taking & productivity
+    /*"code.exe",*/             // VS Code - Coding/Dev work
+    "word.exe",             // Microsoft Word
+    "excel.exe",            // Microsoft Excel
+    "powerpoint.exe",       // Microsoft PowerPoint
+    "onenote.exe",          // Microsoft OneNote
+    "outlook.exe",          // Microsoft Outlook - Email
+    "teams.exe",            // Microsoft Teams - Meetings
+    "zoom.exe",             // Zoom - Video conferencing
+    "slack.exe",            // Slack - Work chat
+    "acrobat.exe",          // Adobe PDF reader/editor
+    "notepad.exe",          // Simple text editing
+    "figma.exe"            // UI/UX design
+];
+
+let BLACKLIST = [
+    "spotify.exe",          // Music streaming
+    "whatsapp.exe",         // Messaging app
+    "discord.exe",          // Gaming + casual chats
+    "instagram.exe",        // Social media
+    "facebook.exe",         // Social media
+    "telegram.exe",         // Messaging
+    "messenger.exe",        // Facebook Messenger
+    "tiktok.exe",           // Social video app
+    "netflix.exe",          // Video streaming
+    "primevideo.exe",       // Video streaming
+    "youtube.exe",          // Desktop YouTube app
+    "vlc.exe",              // Media player
+    "reddit.exe",           // Reddit desktop app
+    "pinterest.exe",        // Browsing distractions
+    "games.exe",            // Generic game launcher
+    "epicgameslauncher.exe",// Gaming
+    "steam.exe",            // Gaming
+    "riotclient.exe",       // Gaming
+    "battlenet.exe",        // Gaming
+];
+
 
 const killBlackListProcess = async (killList) => {
     try{
