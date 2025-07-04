@@ -58,8 +58,6 @@ if(window.firebaseAPI){
 
         try {
             await window.firebaseAPI.resetFocusMode();
-            console.log("focusMode reset successfully. Proceeding with quit.");
-
             // Unbind and allow quit
             window.onbeforeunload = null;
             window.close();
@@ -72,7 +70,7 @@ if(window.firebaseAPI){
     });
 }
 else{
-    console.log("FirebaseAPI could not load.")
+    console.error("FirebaseAPI could not load.")
     const userIdEl = document.getElementById("userId");
     const focusStateEl = document.getElementById("focusState");
     const statusIndicatorEl = document.getElementById("statusIndicator");

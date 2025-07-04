@@ -40,10 +40,8 @@ try {
     if (!fs.existsSync(userIdFile)) {
         USER_ID = generateUserId();
         fs.writeFileSync(userIdFile, USER_ID, "utf-8");
-        console.log("Generated new USER_ID:", USER_ID);
     } else {
         USER_ID = fs.readFileSync(userIdFile, "utf-8").trim();
-        console.log("Loaded existing USER_ID:", USER_ID);
     }
 }
 catch (err) {
@@ -66,7 +64,6 @@ async function setFocusMode(value) {
 
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const result = await response.json();
-    console.log(`focusMode set to ${value}`);
     return result;
 }
 
@@ -74,7 +71,6 @@ async function getFocusMode() {
     const response = await fetchFn(focusModeURL);
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const data = await response.json();
-    console.log("focusMode from Firebase:", data);
     return data;
 }
 
