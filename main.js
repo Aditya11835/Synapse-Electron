@@ -88,8 +88,10 @@ const createPopupWindow = () => {
         parent: mainWindow,
         backgroundColor: "#201E40",
         webPreferences: {
+            preload: path.join(__dirname, "preload.js"),
             nodeIntegration: false,
             contextIsolation: true,
+            sandbox: false,
             devTools: false
         }
     });
@@ -110,22 +112,21 @@ const createPopupWindow = () => {
 
 app.whenReady().then(() => {
     createWindow();
-    createPopupWindow();
-
-    ipcMain.on("trigger-popup", () => {
-    if (!popupWindow) createPopupWindow();
-    });
-    ipcMain.on('terminate-popup', () => {
-        if(popupWindow){
-            popupWindow.close();
-        }
-    });
-
+    // createPopupWindow();
 
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) createWindow();
     });
 });
+
+ipcMain.on("trigger-popup", () => {
+    if (!popupWindow) createPopupWindow();
+    });
+ipcMain.on('terminate-popup', () => {
+    if(popupWindow){
+        popupWindow.close();
+    }
+    });
 
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') app.quit();

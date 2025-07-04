@@ -153,13 +153,8 @@ const detectWhiteListProcess = async () => {
                 if (focusModeActive) {
                     ipcRenderer.send("trigger-popup");
                     await killBlackListProcess(killList);
-                    setInterval(()=>{
-                        ipcRenderer.send("terminate-popup");
-                    }, 1500);
                 }
-
             }
-            
         } else if (focusModeActive) {
             await setFocusMode(false);
             focusModeActive = false;
@@ -188,4 +183,9 @@ contextBridge.exposeInMainWorld("firebaseAPI", {
     setFocusMode,
     getFocusMode,
     resetFocusMode: () => setFocusMode(false)
+});
+contextBridge.exposeInMainWorld("electronAPI", {
+    exitPopup: () => {
+        ipcRenderer.send("terminate-popup")
+    }
 });
