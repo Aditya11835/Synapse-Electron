@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu } = require('electron');
+const { app, BrowserWindow, Menu, ipcMain } = require('electron');
 const path = require('node:path');
 
 function createMenuTemplate() {
@@ -54,7 +54,6 @@ function createMenuTemplate() {
     ];
 }
 
-
 let mainWindow;
 const createWindow = () => {
     mainWindow = new BrowserWindow({
@@ -65,7 +64,8 @@ const createWindow = () => {
             preload: path.join(__dirname, 'preload.js'),
             contextIsolation: true,
             nodeIntegration: false,
-            sandbox: false
+            sandbox: false,
+            devTools: false
         }
     });
     mainWindow.maximize();
@@ -76,9 +76,51 @@ const createWindow = () => {
     Menu.setApplicationMenu(menu);
 };
 
+let popupWindow;
+const createPopupWindow = () => {
+    popupWindow = new BrowserWindow({
+        width: 350,
+        height: 345,
+        alwaysOnTop: true,
+        frame: false,
+        modal: false,
+        resizable: false,
+        parent: mainWindow,
+        backgroundColor: "#201E40",
+        webPreferences: {
+            nodeIntegration: false,
+            contextIsolation: true,
+            devTools: false
+        }
+    });
+    popupWindow.loadFile("popup.html");
+
+    // popupWindow.once("ready-to-show", () => {
+    //     setTimeout(() => {
+    //         if (popupWindow) {
+    //             popupWindow.close();
+    //         }
+    //     }, 5000); // 5 seconds
+    // });
+
+    popupWindow.on('closed', () => {
+        popupWindow = null;
+    });
+};
+
 app.whenReady().then(() => {
     createWindow();
-    
+    // createPopupWindow();
+
+    ipcMain.on("trigger-popup", () => {
+    if (!popupWindow) createPopupWindow();
+    });
+    ipcMain.on('terminate-popup', () => {
+        if(popupWindow){
+            popupWindow.close();
+        }
+    });
+
 
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) createWindow();

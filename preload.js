@@ -6,7 +6,7 @@
  * - Exposes Firebase control to renderer
  */
 
-const { contextBridge } = require("electron");
+const { contextBridge, ipcRenderer } = require("electron");
 const path = require("path");
 const fs = require("fs");
 const dotenv = require("dotenv");
@@ -96,7 +96,6 @@ let WHITELIST = [
 
 let BLACKLIST = [
     "spotify.exe",          // Music streaming
-    "whatsapp.exe",         // Messaging app
     "discord.exe",          // Gaming + casual chats
     "instagram.exe",        // Social media
     "facebook.exe",         // Social media
@@ -112,7 +111,6 @@ let BLACKLIST = [
     "games.exe",            // Generic game launcher
     "epicgameslauncher.exe",// Gaming
     "steam.exe",            // Gaming
-    "riotclient.exe",       // Gaming
     "battlenet.exe",        // Gaming
 ];
 
@@ -151,7 +149,17 @@ const detectWhiteListProcess = async () => {
 
             BLACKLIST = BLACKLIST.filter(b => !WHITELIST.includes(b));
             const killList = procList.filter(proc => BLACKLIST.includes(proc.name.toLowerCase()));
-            killBlackListProcess(killList);
+            if(killList.length !== 0){
+                if (focusModeActive) {
+                    ipcRenderer.send("trigger-popup");
+                    await killBlackListProcess(killList);
+                    setInterval(()=>{
+                        ipcRenderer.send("terminate-popup");
+                    }, 1500);
+                }
+
+            }
+            
         } else if (focusModeActive) {
             await setFocusMode(false);
             focusModeActive = false;

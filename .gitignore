@@ -144,3 +144,4 @@ t.html
 *.env
 data/
 test*.js
+test*.html
