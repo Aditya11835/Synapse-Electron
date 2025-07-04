@@ -26,60 +26,53 @@ async function updateFocusUI() {
     }
 }
 
-if(window.firebaseAPI){
-    document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+    userIdEl = document.getElementById("userId");
+    focusStateEl = document.getElementById("focusState");
+    statusIndicatorEl = document.getElementById("statusIndicator");
 
-        userIdEl = document.getElementById("userId");
-        focusStateEl = document.getElementById("focusState");
-        statusIndicatorEl = document.getElementById("statusIndicator");
+    // Defensive check
+    if (!userIdEl || !focusStateEl || !statusIndicatorEl) {
+        console.error("One or more DOM elements not found.");
+        return;
+    }
 
-        setInterval(updateFocusUI, 1000); // keep UI updated
+    try {
+        await window.firebaseAPI.setFocusMode(false);
+        focusStateEl.textContent = "OFF";
+        focusStateEl.classList.add("off");
+        focusStateEl.classList.remove("on");
+        statusIndicatorEl.classList.add("off");
+        statusIndicatorEl.classList.remove("on");
+    } catch (err) {
+        console.error("Error resetting focusMode on load:", err);
+    }
 
-        //First reset to false
-        window.firebaseAPI?.setFocusMode(false)
-        .then(() => {
-            //After resetting, reflect UI state
-            focusStateEl.textContent = "OFF";
-            focusStateEl.classList.add("off");
-            focusStateEl.classList.remove("on");
-            statusIndicatorEl.classList.add("off");
-            statusIndicatorEl.classList.remove("on");
-        })
-        .catch(err => console.error("Error resetting focusMode on load:", err));
-        
-        if (userIdEl && window.firebaseAPI?.getUsername) {
-        const username = window.firebaseAPI.getUsername();
-        userIdEl.textContent = `${username.substring(0, 4)}-${username.substring(4)}`;
+    try {
+        const username = await window.firebaseAPI.getUsername();
+        if (username?.length >= 8) {
+            userIdEl.textContent = `${username.substring(0, 4)}-${username.substring(4)}`;
+        } else {
+            userIdEl.textContent = "INVALID-ID";
         }
+    } catch (err) {
+        userIdEl.textContent = "NOT-FOUND";
+        console.error("Could not load USER_ID:", err);
+    }
 
-        // Handle app quit — reset focusMode to false before exit
-        window.onbeforeunload = async (e) => {
-        e.returnValue = false; // Prevents immediate close
+    // Regular UI sync
+    setInterval(updateFocusUI, 1000);
 
+    // Reset focusMode before quitting
+    window.onbeforeunload = async (e) => {
+        e.returnValue = false;
         try {
             await window.firebaseAPI.resetFocusMode();
-            // Unbind and allow quit
-            window.onbeforeunload = null;
-            window.close();
         } catch (err) {
             console.error("Error resetting focusMode before quit:", err);
+        } finally {
             window.onbeforeunload = null;
-            window.close(); // Proceed anyway on failure
+            window.close();
         }
-        };
-    });
-}
-else{
-    console.error("FirebaseAPI could not load.")
-    const userIdEl = document.getElementById("userId");
-    const focusStateEl = document.getElementById("focusState");
-    const statusIndicatorEl = document.getElementById("statusIndicator");
-
-    userIdEl.textContent = "NOT-FOUND"
-    focusStateEl.textContent = "ERROR";
-    focusStateEl.classList.add("off");
-    focusStateEl.classList.remove("on");
-    statusIndicatorEl.classList.remove("on");
-    statusIndicatorEl.classList.add("off");
-}
-
+    };
+});

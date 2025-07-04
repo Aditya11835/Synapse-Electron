@@ -1,14 +1,18 @@
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener("DOMContentLoaded", () => {
     const exitButton = document.getElementById("exit");
-    if (exitButton) {
-        exitButton.addEventListener("click", () => {
-            if (window.electronAPI?.exitPopup) {
-                window.electronAPI.exitPopup();
-            } else {
-                console.error("window.electronAPI.exitPopup not available");
-            }
-        });
-    } else {
-        console.error("Exit button not found");
+
+    if (!exitButton) {
+        console.error("Exit button not found in popup.html.");
+        return;
     }
+
+    if (!window.electronAPI?.exitPopup) {
+        console.error("electronAPI.exitPopup is not available.");
+        return;
+    }
+
+    exitButton.addEventListener("click", () => {
+        console.log("Exit clicked: calling exitPopup()");
+        window.electronAPI.exitPopup();
+    });
 });
