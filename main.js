@@ -87,7 +87,9 @@ async function detectWhiteListProcess() {
 
         const killList = procList.filter(proc => BLACKLIST.includes(proc.name.toLowerCase()));
         if (killList.length && focusModeActive) {
-            if (!popupWindow) createPopupWindow();
+            if (!popupWindow){
+                createPopupWindow();
+            }
             await killBlackListProcess(killList);
         }
     } else if (focusModeActive) {
@@ -202,7 +204,6 @@ function createPopupWindow() {
 // App lifecycle
 app.whenReady().then(() => {
     createWindow();
-
     app.on("activate", () => {
         if (BrowserWindow.getAllWindows().length === 0) createWindow();
     });
